@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#102438" />
+  <title>建築師考古題｜實戰演練</title>
+  <style>
+    :root {
+      --ink: #102438;
+      --ink-soft: #486273;
+      --muted: #78909c;
+      --paper: #f7fbfc;
+      --panel: rgba(255,255,255,.92);
+      --line: #d8e5e9;
+      --cyan: #0f9fa9;
+      --cyan-dark: #087880;
+      --cyan-soft: #dff5f3;
+      --orange: #ed8958;
+      --orange-soft: #fff0e8;
+      --green: #248663;
+      --green-soft: #e8f6ef;
+      --red: #c7545d;
+      --red-soft: #fff0f0;
+      --shadow: 0 18px 50px rgba(16,36,56,.11);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 8% 0%, #ddf4f1 0, transparent 28%),
+        radial-gradient(circle at 100% 8%, #ffe5d6 0, transparent 25%),
+        linear-gradient(145deg, #eef7f8, #f9fbf8 58%, #fff8f1);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Segoe UI", sans-serif;
+      min-height: 100vh;
+    }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1440px, 100%); margin: 0 auto; padding: 28px 24px 46px; }
+    .hero { display: flex; justify-content: space-between; gap: 24px; align-items: flex-end; margin-bottom: 22px; }
+    .eyebrow { color: var(--cyan-dark); font-size: 13px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 8px 0 0; font-size: clamp(30px, 5vw, 58px); line-height: 1.04; letter-spacing: -.055em; }
+    .hero p { max-width: 630px; color: var(--ink-soft); margin: 12px 0 0; line-height: 1.75; }
+    .hero-mark { min-width: 160px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.65); color: var(--cyan-dark); text-align: right; font-size: 12px; font-weight: 800; line-height: 1.6; }
+    .hero-mark strong { display: block; color: var(--orange); font-size: 28px; letter-spacing: -.06em; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .stat { padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 8px 24px rgba(16,36,56,.05); }
+    .stat span { display: block; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat b { display: block; margin-top: 6px; color: var(--ink); font-size: 26px; letter-spacing: -.04em; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+    .setup { padding: 26px; }
+    .section-kicker { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+    .section-kicker h2 { margin: 0; font-size: 23px; letter-spacing: -.035em; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; background: var(--cyan-soft); color: var(--cyan-dark); font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .control-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 8px; color: var(--ink-soft); font-size: 13px; font-weight: 800; }
+    select { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 13px; background: #fbfdfd; color: var(--ink); outline: none; }
+    select:focus { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(15,159,169,.12); }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 18px; padding: 13px 14px; border: 1px dashed #bed8da; border-radius: 14px; background: #f5fbfb; }
+    .switch { display: flex; align-items: center; gap: 9px; color: var(--ink-soft); font-size: 13px; font-weight: 700; }
+    .switch input { accent-color: var(--cyan); width: 18px; height: 18px; }
+    .primary, .secondary, .ghost { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 900; transition: transform .15s ease, filter .15s ease; }
+    .primary { background: var(--cyan); color: #fff; box-shadow: 0 9px 18px rgba(15,159,169,.24); }
+    .primary:hover, .secondary:hover, .ghost:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .secondary { background: var(--orange); color: #fff; }
+    .ghost { background: #eef5f6; color: var(--cyan-dark); }
+    .button-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .bank-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 26px; }
+    .bank-card { padding: 15px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .bank-card .top { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+    .bank-card h3 { margin: 0; font-size: 16px; }
+    .bank-card p { margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .bank-count { color: var(--orange); font-weight: 900; font-size: 20px; }
+    .quiz-wrap { display: none; }
+    .quiz-wrap.active { display: block; }
+    .quiz-head { padding: 20px 24px 15px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #102438, #174458); color: #fff; }
+    .quiz-headline { display: flex; justify-content: space-between; gap: 18px; align-items: start; }
+    .quiz-head small { color: #b8dadd; font-weight: 800; }
+    .quiz-head h2 { margin: 6px 0 0; font-size: 22px; }
+    .timer { padding: 8px 11px; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; color: #fff; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
+    .progress-line { height: 8px; margin-top: 16px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.16); }
+    .progress-line i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #8fe4df, #ffc18c); transition: width .25s ease; }
+    .question { padding: 26px 24px 22px; }
+    .q-meta { display: flex; justify-content: space-between; gap: 14px; align-items: center; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .q-number { color: var(--orange); }
+    .stem { margin: 18px 0 22px; font-size: clamp(20px, 2.8vw, 28px); line-height: 1.65; letter-spacing: -.025em; white-space: pre-wrap; }
+    .options { display: grid; gap: 11px; }
+    .option { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: #fff; color: var(--ink); text-align: left; line-height: 1.65; transition: border .15s ease, background .15s ease, transform .15s ease; }
+    .option:hover:not(:disabled) { border-color: var(--cyan); background: #f3fbfb; transform: translateX(2px); }
+    .option:disabled { cursor: default; }
+    .option-letter { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: #edf4f5; color: var(--cyan-dark); font-weight: 900; }
+    .option.correct { border-color: var(--green); background: var(--green-soft); }
+    .option.correct .option-letter { background: var(--green); color: #fff; }
+    .option.wrong { border-color: var(--red); background: var(--red-soft); }
+    .option.wrong .option-letter { background: var(--red); color: #fff; }
+    .feedback { display: none; margin-top: 18px; padding: 15px 16px; border-radius: 14px; background: #f4f9fa; border: 1px solid #d2e6e8; color: var(--ink-soft); line-height: 1.65; }
+    .feedback.show { display: block; }
+    .feedback strong { color: var(--ink); }
+    .feedback .correction { margin-top: 6px; color: var(--cyan-dark); font-weight: 800; }
+    .quiz-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+    .quiz-actions .right { display: flex; gap: 10px; }
+    .side { display: grid; gap: 14px; position: sticky; top: 18px; }
+    .side-card { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.8); }
+    .side-card h3 { margin: 0 0 12px; font-size: 15px; }
+    .score-card { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .score-card p { margin: 0; color: #bcd1d6; font-size: 13px; line-height: 1.6; }
+    .score-value { margin: 8px 0 2px; font-size: 42px; font-weight: 900; letter-spacing: -.07em; }
+    .score-value small { font-size: 16px; color: #bcd1d6; letter-spacing: 0; }
+    .nav-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; max-height: 220px; overflow: auto; padding-right: 3px; }
+    .nav-dot { min-height: 29px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .nav-dot.current { border-color: var(--cyan); background: var(--cyan-soft); color: var(--cyan-dark); }
+    .nav-dot.done { border-color: #b3ded0; background: var(--green-soft); color: var(--green); }
+    .nav-dot.missed { border-color: #efc1c4; background: var(--red-soft); color: var(--red); }
+    .designs { margin-top: 18px; padding: 22px 24px 24px; }
+    .design-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .design-card { padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .design-card h3 { margin: 8px 0 5px; font-size: 17px; }
+    .design-card p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.65; }
+    .design-card a { display: inline-block; margin-top: 12px; color: var(--cyan-dark); font-size: 12px; font-weight: 900; text-decoration: none; }
+    .result { display: none; padding: 26px 24px; }
+    .result.active { display: block; }
+    .result-hero { display: grid; grid-template-columns: 150px 1fr; gap: 22px; align-items: center; padding: 20px; border: 1px solid #cce4df; border-radius: 18px; background: linear-gradient(135deg, #effaf7, #fff8ee); }
+    .result-ring { display: grid; place-items: center; width: 132px; height: 132px; border: 12px solid #bde8df; border-top-color: var(--orange); border-right-color: var(--cyan); border-radius: 50%; font-size: 28px; font-weight: 900; }
+    .result h2 { margin: 0; font-size: 26px; }
+    .result p { margin: 8px 0 0; color: var(--ink-soft); line-height: 1.65; }
+    .result-list { display: grid; gap: 8px; margin-top: 18px; }
+    .result-item { display: flex; justify-content: space-between; gap: 15px; padding: 12px 14px; border-radius: 12px; background: #f7fafb; color: var(--ink-soft); font-size: 13px; }
+    .result-item b { color: var(--ink); }
+    .footnote { margin: 18px 2px 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    @media (max-width: 1080px) { .layout { grid-template-columns: 1fr; } .side { position: static; grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 720px) { .shell { padding: 20px 14px 36px; } .hero { display: block; } .hero-mark { display: inline-block; margin-top: 16px; text-align: left; } .stats { grid-template-columns: repeat(2, minmax(0,1fr)); } .control-grid, .bank-list, .design-grid, .side { grid-template-columns: 1fr; } .setup, .question, .quiz-head, .designs, .result { padding-left: 16px; padding-right: 16px; } .setting-row, .quiz-actions { align-items: stretch; flex-direction: column; } .quiz-actions .right { display: grid; grid-template-columns: 1fr 1fr; } .result-hero { grid-template-columns: 1fr; text-align: center; } .result-ring { margin: 0 auto; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">第五堂課 · 建築師考古題</div>
+        <h1>把考古題，變成一場實戰。</h1>
+        <p>從 112、113 年建築師高考官方題庫中隨機抽題。選擇科目、作答、立即看官方答案與更正給分規則，讓每一次練習都留下清楚的成績。</p>
+      </div>
+      <div class="hero-mark"><strong>480</strong>道選擇題<br />考選部官方資料整理</div>
+    </header>
+
+    <section class="stats" id="stats"></section>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="setup" id="setupView">
+          <div class="section-kicker"><h2>開始一回練習</h2><span class="pill">離線可用 · 不需登入</span></div>
+          <div class="control-grid">
+            <label>考試年度<select id="yearSelect"><option value="all">112＋113 年</option><option value="112">112 年</option><option value="113">113 年</option></select></label>
+            <label>考試科目<select id="subjectSelect"><option value="all">全部選擇題科目</option></select></label>
+            <label>本回題數<select id="countSelect"><option value="10">10 題 · 快速練習</option><option value="20">20 題 · 完整熱身</option><option value="all">全部題目</option></select></label>
+          </div>
+          <div class="setting-row">
+            <label class="switch"><input id="shuffleCheck" type="checkbox" checked /> 隨機抽題（建議開啟）</label>
+            <span id="poolHint" class="pill">可抽出 480 題</span>
+          </div>
+          <div class="button-row"><button class="primary" id="startBtn">開始測驗 →</button></div>
+          <div class="bank-list" id="bankList"></div>
+        </div>
+
+        <div class="quiz-wrap" id="quizView">
+          <div class="quiz-head">
+            <div class="quiz-headline"><div><small id="quizContext"></small><h2 id="quizSubject"></h2></div><div class="timer" id="timer">00:00</div></div>
+            <div class="progress-line"><i id="progressBar"></i></div>
+          </div>
+          <div class="question" id="questionView"></div>
+          <div class="result" id="resultView"></div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <div class="side-card score-card"><h3>本機練習紀錄</h3><div class="score-value" id="bestScore">--<small> 尚未作答</small></div><p id="bestMeta">完成一回測驗後，這裡會記錄你的最佳成績。</p></div>
+        <div class="side-card" id="navCard"><h3>題目導航</h3><div class="nav-grid" id="navGrid"><span style="color:var(--muted);font-size:13px">開始測驗後顯示</span></div></div>
+        <div class="side-card"><h3>遊戲規則</h3><p style="margin:0;color:var(--ink-soft);font-size:13px;line-height:1.75">每題選一個答案。送出後會立即顯示官方判定；有更正答案的題目，會依考選部公告的「一律給分」或多個可得分選項判分。</p></div>
+      </aside>
+    </div>
+
+    <section class="panel designs">
+      <div class="section-kicker"><h2>設計題資料庫</h2><span class="pill">申論／設計題 · 不自動計分</span></div>
+      <div class="design-grid" id="designGrid"></div>
+      <p class="footnote">設計題與敷地題保留官方題目內容，適合搭配圖紙練習；考選部頁面未提供可自動判分的標準答案，因此以原始 PDF 閱讀為主。</p>
+    </section>
+  </main>
+  <script src="quiz-data.js"></script>
+  <script>
+    const data = window.QUIZ_DATA;
+    const $ = (selector) => document.querySelector(selector);
+    const state = { questions: [], index: 0, answers: {}, startedAt: 0, elapsed: 0, timerId: null, settings: { year: 'all', subject: 'all', count: '10', shuffle: true } };
+    const optionLabels = { A: 'A', B: 'B', C: 'C', D: 'D' };
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+    }
+
+    function shuffle(list) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function filteredBanks() {
+      return data.banks.filter((bank) => (state.settings.year === 'all' || bank.year === state.settings.year) && (state.settings.subject === 'all' || bank.subject === state.settings.subject));
+    }
+
+    function updateSubjectOptions() {
+      const subjects = [...new Set(data.banks.filter((bank) => state.settings.year === 'all' || bank.year === state.settings.year).map((bank) => bank.subject))];
+      const select = $('#subjectSelect');
+      select.innerHTML = '<option value="all">全部選擇題科目</option>' + subjects.map((subject) => `<option value="${escapeHtml(subject)}">${escapeHtml(subject)}</option>`).join('');
+      select.value = subjects.includes(state.settings.subject) ? state.settings.subject : 'all';
+      state.settings.subject = select.value;
+      updatePoolHint();
+    }
+
+    function updatePoolHint() {
+      const total = filteredBanks().reduce((sum, bank) => sum + bank.count, 0);
+      $('#poolHint').textContent = `可抽出 ${total} 題`;
+    }
+
+    function renderStats() {
+      const total = data.banks.reduce((sum, bank) => sum + bank.count, 0);
+      const subjectCount = new Set(data.banks.map((bank) => bank.subject)).size;
+      const designCount = data.designs.length;
+      const best = JSON.parse(localStorage.getItem('architectQuizBest') || '{}');
+      const bestValue = Object.values(best).reduce((max, item) => Math.max(max, item.percent || 0), 0);
+      $('#stats').innerHTML = [
+        ['題庫總量', `${total} 題`],
+        ['選擇題科目', `${subjectCount} 科`],
+        ['設計題資料', `${designCount} 組`],
+        ['個人最佳', bestValue ? `${bestValue}%` : '--'],
+      ].map(([label, value]) => `<div class="stat"><span>${label}</span><b>${value}</b></div>`).join('');
+      if (bestValue) $('#bestScore').innerHTML = `${bestValue}%<small> 最佳</small>`;
+    }
+
+    function renderBankList() {
+      $('#bankList').innerHTML = data.banks.map((bank) => `<article class="bank-card"><div class="top"><div><h3>${bank.year} 年 · ${escapeHtml(bank.subject)}</h3><p>官方選擇題題庫 · 可在設定中篩選</p></div><div class="bank-count">${bank.count}</div></div></article>`).join('');
+    }
+
+    function renderDesigns() {
+      $('#designGrid').innerHTML = data.designs.map((item) => `<article class="design-card"><span class="pill">${item.year} 年 · ${escapeHtml(item.subject)}</span><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.brief)}</p><a href="${encodeURI(item.source)}" target="_blank" rel="noreferrer">開啟官方題目 PDF ↗</a></article>`).join('');
+    }
+
+    function startQuiz() {
+      const pool = filteredBanks().flatMap((bank) => bank.questions);
+      state.questions = state.settings.shuffle ? shuffle(pool) : pool;
+      if (state.settings.count !== 'all') state.questions = state.questions.slice(0, Math.min(Number(state.settings.count), state.questions.length));
+      state.index = 0; state.answers = {}; state.startedAt = Date.now(); state.elapsed = 0;
+      clearInterval(state.timerId); state.timerId = setInterval(updateTimer, 1000);
+      $('#setupView').style.display = 'none'; $('#quizView').classList.add('active'); $('#resultView').classList.remove('active'); $('#questionView').style.display = 'block';
+      renderQuestion(); renderNav();
+    }
+
+    function updateTimer() {
+      state.elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
+      const minutes = String(Math.floor(state.elapsed / 60)).padStart(2, '0');
+      const seconds = String(state.elapsed % 60).padStart(2, '0');
+      $('#timer').textContent = `${minutes}:${seconds}`;
+    }
+
+    function currentQuestion() { return state.questions[state.index]; }
+
+    function renderQuestion() {
+      const question = currentQuestion();
+      if (!question) return finishQuiz();
+      const chosen = state.answers[state.index];
+      $('#quizContext').textContent = `${question.year} 年高考 · 第 ${question.number} 題`;
+      $('#quizSubject').textContent = question.subject;
+      $('#progressBar').style.width = `${((state.index + (chosen ? 1 : 0)) / state.questions.length) * 100}%`;
+      const options = Object.entries(question.options).map(([letter, text]) => {
+        const resultClass = chosen ? (question.accepted.includes(letter) ? 'correct' : chosen === letter ? 'wrong' : '') : '';
+        return `<button class="option ${resultClass}" data-choice="${letter}" ${chosen ? 'disabled' : ''}><span class="option-letter">${letter}</span><span>${escapeHtml(text)}</span></button>`;
+      }).join('');
+      const feedback = chosen ? `<div class="feedback show"><strong>${question.accepted.includes(chosen) ? '答對了，繼續保持！' : '這題先記下來，下一題再追回來。'}</strong><div>你的答案：${chosen}　·　官方原始答案：${question.answer || '未提供'}</div>${question.correction ? `<div class="correction">${escapeHtml(question.correction)}</div>` : ''}<div style="margin-top:5px"><a href="${encodeURI(question.source)}" target="_blank" rel="noreferrer" style="color:var(--cyan-dark);font-weight:800">查看原始試題 PDF ↗</a>　<a href="${encodeURI(question.answerSource)}" target="_blank" rel="noreferrer" style="color:var(--cyan-dark);font-weight:800">查看答案 PDF ↗</a></div></div>` : '';
+      $('#questionView').innerHTML = `<div class="q-meta"><span class="q-number">第 ${state.index + 1} / ${state.questions.length} 題</span><span>${question.correction ? '含官方更正判定' : '單選題'}</span></div><div class="stem">${escapeHtml(question.stem)}</div><div class="options">${options}</div>${feedback}<div class="quiz-actions"><button class="ghost" id="quitBtn">返回設定</button><div class="right">${chosen && state.index > 0 ? '<button class="ghost" id="prevBtn">← 上一題</button>' : ''}${chosen ? `<button class="primary" id="nextBtn">${state.index === state.questions.length - 1 ? '查看成績' : '下一題 →'}</button>` : ''}</div></div>`;
+      document.querySelectorAll('[data-choice]').forEach((button) => button.addEventListener('click', () => answerQuestion(button.dataset.choice)));
+      $('#quitBtn').addEventListener('click', backToSetup);
+      if ($('#prevBtn')) $('#prevBtn').addEventListener('click', () => { state.index -= 1; renderQuestion(); renderNav(); });
+      if ($('#nextBtn')) $('#nextBtn').addEventListener('click', () => { if (state.index === state.questions.length - 1) finishQuiz(); else { state.index += 1; renderQuestion(); renderNav(); } });
+    }
+
+    function answerQuestion(choice) { state.answers[state.index] = choice; renderQuestion(); renderNav(); }
+
+    function renderNav() {
+      $('#navGrid').innerHTML = state.questions.map((question, index) => { const chosen = state.answers[index]; const className = index === state.index ? 'current' : chosen ? (question.accepted.includes(chosen) ? 'done' : 'missed') : ''; return `<button class="nav-dot ${className}" data-index="${index}">${index + 1}</button>`; }).join('');
+      document.querySelectorAll('.nav-dot').forEach((button) => button.addEventListener('click', () => { state.index = Number(button.dataset.index); renderQuestion(); renderNav(); }));
+    }
+
+    function finishQuiz() {
+      clearInterval(state.timerId);
+      const correct = state.questions.reduce((sum, question, index) => sum + (question.accepted.includes(state.answers[index]) ? 1 : 0), 0);
+      const percent = Math.round((correct / state.questions.length) * 100);
+      const key = `${state.settings.year}-${state.settings.subject}`;
+      const best = JSON.parse(localStorage.getItem('architectQuizBest') || '{}');
+      if (!best[key] || percent > best[key].percent) { best[key] = { percent, correct, total: state.questions.length, date: new Date().toLocaleDateString('zh-TW') }; localStorage.setItem('architectQuizBest', JSON.stringify(best)); }
+      $('#questionView').style.display = 'none'; $('#resultView').classList.add('active');
+      $('#resultView').innerHTML = `<div class="result-hero"><div class="result-ring">${percent}%</div><div><h2>${percent >= 80 ? '狀態很好，繼續衝！' : percent >= 60 ? '基礎穩住，再刷一回！' : '先把錯題變成得分題！'}</h2><p>本回答對 <strong>${correct}</strong> / ${state.questions.length} 題，花費 ${$('#timer').textContent}。${percent < 100 ? '建議回看題目導航中的紅色題號。' : '恭喜你全題通過！'}</p></div></div><div class="result-list"><div class="result-item"><span>作答率</span><b>${Math.round(Object.keys(state.answers).length / state.questions.length * 100)}%</b></div><div class="result-item"><span>更正答案題</span><b>${state.questions.filter((question) => question.correction).length} 題</b></div><div class="result-item"><span>資料來源</span><b>考選部官方試題</b></div></div><div class="button-row"><button class="ghost" id="resultSetupBtn">回到設定</button><button class="primary" id="retryBtn">再來一回 →</button></div>`;
+      renderStats(); $('#bestMeta').textContent = `目前最佳：${best[key].percent}%（${best[key].date}）`;
+      $('#resultSetupBtn').addEventListener('click', backToSetup); $('#retryBtn').addEventListener('click', startQuiz);
+    }
+
+    function backToSetup() { clearInterval(state.timerId); $('#quizView').classList.remove('active'); $('#setupView').style.display = 'block'; $('#questionView').style.display = 'block'; $('#resultView').classList.remove('active'); $('#navGrid').innerHTML = '<span style="color:var(--muted);font-size:13px">開始測驗後顯示</span>'; }
+
+    $('#yearSelect').addEventListener('change', (event) => { state.settings.year = event.target.value; updateSubjectOptions(); });
+    $('#subjectSelect').addEventListener('change', (event) => { state.settings.subject = event.target.value; updatePoolHint(); });
+    $('#countSelect').addEventListener('change', (event) => { state.settings.count = event.target.value; });
+    $('#shuffleCheck').addEventListener('change', (event) => { state.settings.shuffle = event.target.checked; });
+    $('#startBtn').addEventListener('click', startQuiz);
+    updateSubjectOptions(); renderStats(); renderBankList(); renderDesigns();
+  </script>
+</body>
+</html>
